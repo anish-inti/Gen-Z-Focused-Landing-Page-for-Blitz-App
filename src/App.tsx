@@ -6,7 +6,9 @@ import { HowItWorksSection } from './components/sections/HowItWorksSection';
 import { FeaturesSection } from './components/sections/FeaturesSection';
 import { TestimonialsSection } from './components/sections/TestimonialsSection';
 import { EarlyAccessSection } from './components/sections/EarlyAccessSection';
+import { CareersSection } from './components/sections/CareersSection';
 import { StickyButton } from './components/ui/StickyButton';
+
 export function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const toggleTheme = () => {
@@ -20,6 +22,7 @@ export function App() {
         <FeaturesSection />
         <TestimonialsSection />
         <EarlyAccessSection />
+        <CareersSection />
       </main>
       <Footer />
       <StickyButton />

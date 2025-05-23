@@ -62,11 +62,11 @@ export const EarlyAccessSection = () => {
         <div className="mt-12 flex justify-center flex-wrap gap-6">
           <div className="flex flex-col items-center">
             <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" className="h-12 opacity-50 hover:opacity-100 transition-opacity" />
-            <p className="text-xs text-gray-500 mt-2">Coming April 2025</p>
+            <p className="text-xs text-gray-500 mt-2">Coming August 2025</p>
           </div>
           <div className="flex flex-col items-center">
             <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-12 opacity-50 hover:opacity-100 transition-opacity" />
-            <p className="text-xs text-gray-500 mt-2">Coming April 2025</p>
+            <p className="text-xs text-gray-500 mt-2">Coming August 2025</p>
           </div>
         </div>
       </div>
