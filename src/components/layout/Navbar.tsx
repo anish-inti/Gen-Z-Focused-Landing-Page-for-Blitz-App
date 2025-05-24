@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SunIcon, MoonIcon, MenuIcon, XIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { FormModal } from '../ui/FormModal';
@@ -18,26 +18,11 @@ export const Navbar = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
 
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleMenuClick = () => {
@@ -45,29 +30,35 @@ export const Navbar = ({
     if (!isMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
   };
 
   const handleFormOpen = () => {
     setIsFormOpen(true);
     setIsMenuOpen(false);
+    document.body.style.overflow = '';
+  };
+
+  const handleNavLinkClick = () => {
+    setIsMenuOpen(false);
+    document.body.style.overflow = '';
   };
 
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
           isScrolled 
-            ? `${theme === 'light' ? 'bg-white/90 shadow-sm' : 'bg-black/90 shadow-[0_4px_30px_rgba(255,110,199,0.1)]'}` 
+            ? `${theme === 'light' ? 'bg-white shadow-sm' : 'bg-black shadow-[0_4px_30px_rgba(255,110,199,0.1)]'}` 
             : 'bg-transparent'
-        } backdrop-blur-sm`}
+        }`}
       >
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
-            <div className="text-2xl font-bold bg-gradient-to-r from-[#FF6EC7] to-purple-500 bg-clip-text text-transparent">
+            <a href="#" className="text-2xl font-bold bg-gradient-to-r from-[#FF6EC7] to-purple-500 bg-clip-text text-transparent">
               Blitz
-            </div>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
@@ -89,8 +80,8 @@ export const Navbar = ({
             <div className="flex items-center gap-4">
               <button 
                 onClick={toggleTheme} 
-                className="p-2 rounded-full hover:bg-gray-200/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-pink focus:ring-offset-2" 
-                aria-label="Toggle theme"
+                className="p-2 rounded-full hover:bg-gray-200/20 transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF6EC7] focus:ring-offset-2" 
+                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
               >
                 {theme === 'light' ? <MoonIcon size={20} /> : <SunIcon size={20} />}
               </button>
@@ -117,16 +108,17 @@ export const Navbar = ({
           <div className="md:hidden flex items-center gap-2">
             <button 
               onClick={toggleTheme} 
-              className="p-2 rounded-full hover:bg-gray-200/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-pink focus:ring-offset-2" 
-              aria-label="Toggle theme"
+              className="p-2 rounded-full hover:bg-gray-200/20 transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF6EC7] focus:ring-offset-2" 
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             >
               {theme === 'light' ? <MoonIcon size={20} /> : <SunIcon size={20} />}
             </button>
             <button 
               onClick={handleMenuClick} 
-              className="p-2 rounded-full hover:bg-gray-200/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-pink focus:ring-offset-2" 
+              className="p-2 rounded-full hover:bg-gray-200/20 transition-colors focus:outline-none focus:ring-2 focus:ring-[#FF6EC7] focus:ring-offset-2" 
               aria-label="Toggle menu"
               aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
               {isMenuOpen ? <XIcon size={24} /> : <MenuIcon size={24} />}
             </button>
@@ -134,15 +126,19 @@ export const Navbar = ({
 
           {/* Mobile Menu */}
           <div 
-            className={`fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+            id="mobile-menu"
+            className={`fixed inset-0 bg-black/80 transition-opacity duration-200 md:hidden ${
               isMenuOpen ? 'opacity-100 z-40' : 'opacity-0 pointer-events-none'
             }`}
-            onClick={() => setIsMenuOpen(false)}
+            onClick={handleNavLinkClick}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile menu"
           >
             <div 
               className={`absolute top-0 right-0 w-full max-w-sm h-full ${
                 theme === 'light' ? 'bg-white' : 'bg-black'
-              } shadow-lg transform transition-transform duration-300 ${
+              } shadow-lg transform transition-transform duration-200 ${
                 isMenuOpen ? 'translate-x-0' : 'translate-x-full'
               }`}
               onClick={e => e.stopPropagation()}
@@ -152,28 +148,28 @@ export const Navbar = ({
                   <a 
                     href="#how-it-works" 
                     className="hover:text-[#FF6EC7] transition-colors py-2 text-lg" 
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={handleNavLinkClick}
                   >
                     How It Works
                   </a>
                   <a 
                     href="#features" 
                     className="hover:text-[#FF6EC7] transition-colors py-2 text-lg" 
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={handleNavLinkClick}
                   >
                     Features
                   </a>
                   <a 
                     href="#testimonials" 
                     className="hover:text-[#FF6EC7] transition-colors py-2 text-lg" 
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={handleNavLinkClick}
                   >
                     Community
                   </a>
                   <a 
                     href="#careers" 
                     className="hover:text-[#FF6EC7] transition-colors py-2 text-lg" 
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={handleNavLinkClick}
                   >
                     Careers
                   </a>
@@ -202,9 +198,10 @@ export const Navbar = ({
         </div>
       </header>
 
+      {/* Form Modal */}
       <FormModal 
-        isOpen={isFormOpen} 
-        onClose={() => setIsFormOpen(false)} 
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
       />
     </>
   );

@@ -19,27 +19,51 @@ export const FormModal = ({ isOpen, onClose }: FormModalProps) => {
     setSubmitStatus('idle');
 
     try {
-      const formData = new FormData();
-      formData.append('entry.2005620554', email); // Email field ID
-      formData.append('entry.1045781291', phone); // Phone field ID
+      // Create a form element
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://docs.google.com/forms/d/e/1FAIpQLSf19KqVpaLvgaY9aBw097e4_oNE3MCYIQSxTlYqL1GjSn4/formResponse';
+      form.target = '_blank';
 
-      const response = await fetch(
-        'https://docs.google.com/forms/d/e/1FAIpQLSe-H8ZMmW8HA3C8bxNaLA85XKpGR0tDaw9w94hokD8k8X0SEg/formResponse',
-        {
-          method: 'POST',
-          mode: 'no-cors',
-          body: formData,
-        }
-      );
+      // Add email field
+      const emailInput = document.createElement('input');
+      emailInput.type = 'hidden';
+      emailInput.name = 'entry.EMAIL ID';
+      emailInput.value = email;
+      form.appendChild(emailInput);
 
-      setSubmitStatus('success');
-      setEmail('');
-      setPhone('');
+      // Add phone field
+      const phoneInput = document.createElement('input');
+      phoneInput.type = 'hidden';
+      phoneInput.name = 'entry.PHONE NUMBER';
+      phoneInput.value = phone;
+      form.appendChild(phoneInput);
+
+      // Add submit button
+      const submitButton = document.createElement('input');
+      submitButton.type = 'hidden';
+      submitButton.name = 'submit';
+      submitButton.value = 'Submit';
+      form.appendChild(submitButton);
+
+      // Add the form to the document and submit
+      document.body.appendChild(form);
+      form.submit();
+
+      // Clean up
       setTimeout(() => {
-        onClose();
-        setSubmitStatus('idle');
-      }, 2000);
+        document.body.removeChild(form);
+        setSubmitStatus('success');
+        setEmail('');
+        setPhone('');
+        setTimeout(() => {
+          onClose();
+          setSubmitStatus('idle');
+        }, 2000);
+      }, 1000);
+
     } catch (error) {
+      console.error('Form submission error:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -66,7 +90,7 @@ export const FormModal = ({ isOpen, onClose }: FormModalProps) => {
           <XIcon size={20} />
         </button>
 
-        <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-brand-pink to-brand-purple bg-clip-text text-transparent">
+        <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#FF6EC7] to-purple-500 bg-clip-text text-transparent">
           Join the Waitlist
         </h2>
 
@@ -81,8 +105,9 @@ export const FormModal = ({ isOpen, onClose }: FormModalProps) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-brand-pink focus:border-transparent"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-[#FF6EC7] focus:border-transparent"
               placeholder="Enter your email"
+              disabled={isSubmitting}
             />
           </div>
 
@@ -95,9 +120,9 @@ export const FormModal = ({ isOpen, onClose }: FormModalProps) => {
               id="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              required
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-brand-pink focus:border-transparent"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-[#FF6EC7] focus:border-transparent"
               placeholder="Enter your phone number"
+              disabled={isSubmitting}
             />
           </div>
 
@@ -108,7 +133,14 @@ export const FormModal = ({ isOpen, onClose }: FormModalProps) => {
             disabled={isSubmitting}
             className="mt-6"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+            {isSubmitting ? (
+              <div className="flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></div>
+                Submitting...
+              </div>
+            ) : (
+              'Submit'
+            )}
           </Button>
 
           {submitStatus === 'success' && (

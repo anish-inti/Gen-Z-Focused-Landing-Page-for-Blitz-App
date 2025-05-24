@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../ui/Button';
 import { ArrowRightIcon } from 'lucide-react';
 import { InfoModal } from '../ui/InfoModal';
